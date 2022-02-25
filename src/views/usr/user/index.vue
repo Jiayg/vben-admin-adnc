@@ -8,11 +8,6 @@
         <TableAction
           :actions="[
             {
-              icon: 'clarity:info-standard-line',
-              tooltip: '查看用户详情',
-              onClick: handleView.bind(null, record),
-            },
-            {
               icon: 'clarity:note-edit-line',
               tooltip: '编辑用户资料',
               onClick: handleEdit.bind(null, record),
@@ -45,13 +40,11 @@
   import AccountModal from './AccountModal.vue';
 
   import { columns, searchFormSchema } from './user.data';
-  import { useGo } from '/@/hooks/web/usePage';
 
   export default defineComponent({
     name: 'UserManagement',
     components: { BasicTable, PageWrapper, AccountModal, TableAction },
     setup() {
-      const go = useGo();
       const [registerModal, { openModal }] = useModal();
       const searchInfo = reactive<Recordable>({});
       const [registerTable, { reload, updateTableDataRecord }] = useTable({
@@ -68,7 +61,6 @@
         showTableSetting: true,
         bordered: true,
         handleSearchInfoFn(info) {
-          console.log('handleSearchInfoFn', info);
           return info;
         },
         actionColumn: {
@@ -86,7 +78,6 @@
       }
 
       function handleEdit(record: Recordable) {
-        console.log(record);
         openModal(true, {
           record,
           isUpdate: true,
@@ -108,10 +99,6 @@
         }
       }
 
-      function handleView(record: Recordable) {
-        go('/system/account_detail/' + record.id);
-      }
-
       return {
         registerTable,
         registerModal,
@@ -119,7 +106,6 @@
         handleEdit,
         handleDelete,
         handleSuccess,
-        handleView,
         searchInfo,
       };
     },

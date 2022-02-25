@@ -8,7 +8,7 @@
   import { BasicModal, useModalInner } from '/@/components/Modal';
   import { BasicForm, useForm } from '/@/components/Form/index';
   import { accountFormSchema } from './user.data';
-  import { getDeptList } from '/@/api/demo/system';
+  import { GetDeptTreeList } from '/@/api/usr/dept';
 
   export default defineComponent({
     name: 'AccountModal',
@@ -39,7 +39,7 @@
           });
         }
 
-        const treeData = await getDeptList();
+        const treeData = await GetDeptTreeList();
         updateSchema([
           {
             field: 'pwd',
@@ -59,7 +59,7 @@
           const values = await validate();
           setModalProps({ confirmLoading: true });
           // TODO custom api
-          console.log(values);
+
           closeModal();
           emit('success', { isUpdate: unref(isUpdate), values: { ...values, id: rowId.value } });
         } finally {

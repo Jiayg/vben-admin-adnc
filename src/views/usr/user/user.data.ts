@@ -1,6 +1,8 @@
-import { getAllRoleList, isAccountExist } from '/@/api/demo/system';
-import { BasicColumn } from '/@/components/Table';
-import { FormSchema } from '/@/components/Table';
+import { changeStatus, isAccountExist } from '/@/api/usr/user';
+import { BasicColumn, FormSchema } from '/@/components/Table';
+import { Switch, Tag } from 'ant-design-vue';
+import { h } from 'vue';
+import { useMessage } from '/@/hooks/web/useMessage';
 
 export const columns: BasicColumn[] = [
   {
@@ -20,8 +22,15 @@ export const columns: BasicColumn[] = [
   },
   {
     title: '性别',
-    dataIndex: 'sexName',
-    width: 100,
+    dataIndex: 'sex',
+    width: 80,
+    customRender: ({ record }) => {
+      const value = record as any;
+      const enable = value.sex === 1;
+      const color = enable ? 'green' : 'red';
+      const text = enable ? '男' : '女';
+      return h(Tag, { color: color }, () => text);
+    },
   },
   {
     title: '角色',
@@ -49,7 +58,35 @@ export const columns: BasicColumn[] = [
   },
   {
     title: '状态',
-    dataIndex: 'statusName',
+    dataIndex: 'status',
+    customRender: ({ record }) => {
+      const value = record as any;
+      if (!Reflect.has(value, 'pendingStatus')) {
+        value.pendingStatus = false;
+      }
+      return h(Switch, {
+        checked: value.status === 1,
+        checkedChildren: '启用',
+        unCheckedChildren: '禁用',
+        loading: value.pendingStatus,
+        onChange(checked: boolean) {
+          value.pendingStatus = true;
+          const newStatus = checked ? 1 : 0;
+          const { createMessage } = useMessage();
+          changeStatus(value.id, newStatus)
+            .then(() => {
+              value.status = newStatus;
+              createMessage.success(`已成功修改角色状态`);
+            })
+            .catch(() => {
+              createMessage.error('修改角色状态失败');
+            })
+            .finally(() => {
+              value.pendingStatus = false;
+            });
+        },
+      });
+    },
   },
 ];
 
@@ -71,9 +108,9 @@ export const searchFormSchema: FormSchema[] = [
 export const accountFormSchema: FormSchema[] = [
   {
     field: 'account',
-    label: '用户名',
+    label: '账户名',
     component: 'Input',
-    helpMessage: ['本字段演示异步验证', '不能输入带有admin的用户名'],
+    helpMessage: ['不能输入带有admin的用户名'],
     rules: [
       {
         required: true,
@@ -85,7 +122,7 @@ export const accountFormSchema: FormSchema[] = [
             isAccountExist(value)
               .then(() => resolve())
               .catch((err) => {
-                reject(err.message || '验证失败');
+                reject(err.response.data.detail || '验证失败');
               });
           });
         },
@@ -93,30 +130,65 @@ export const accountFormSchema: FormSchema[] = [
     ],
   },
   {
-    field: 'pwd',
-    label: '密码',
-    component: 'InputPassword',
+    field: 'name',
+    label: '姓名',
+    component: 'Input',
     required: true,
-    ifShow: false,
   },
   {
-    label: '角色',
-    field: 'role',
-    component: 'ApiSelect',
+    field: 'sex',
+    label: '性别',
+    component: 'RadioGroup',
     componentProps: {
-      api: getAllRoleList,
-      labelField: 'roleName',
-      valueField: 'roleValue',
+      options: [
+        {
+          label: '男',
+          value: 1,
+        },
+        {
+          label: '女',
+          value: 2,
+        },
+      ],
     },
+    defaultValue: 1,
+  },
+  {
+    label: '邮箱',
+    field: 'email',
+    component: 'Input',
     required: true,
   },
+  {
+    label: '电话',
+    field: 'phone',
+    component: 'Input',
+    required: true,
+  },
+  {
+    label: '生日',
+    field: 'birthday',
+    component: 'DatePicker',
+    required: true,
+  },
+  // {
+  //   label: '角色',
+  //   field: 'role',
+  //   component: 'ApiSelect',
+  //   componentProps: {
+  //     api: GetRolesTree,
+  //     labelField: 'roleName',
+  //     valueField: 'roleValue',
+  //   },
+  //   required: true,
+  // },
   {
     field: 'dept',
     label: '所属部门',
     component: 'TreeSelect',
     componentProps: {
       fieldNames: {
-        label: 'deptName',
+        label: 'label',
         key: 'id',
         value: 'id',
       },
@@ -125,22 +197,21 @@ export const accountFormSchema: FormSchema[] = [
     required: true,
   },
   {
-    field: 'nickname',
-    label: '昵称',
-    component: 'Input',
-    required: true,
-  },
-
-  {
-    label: '邮箱',
-    field: 'email',
-    component: 'Input',
-    required: true,
-  },
-
-  {
-    label: '备注',
-    field: 'remark',
-    component: 'InputTextArea',
+    field: 'status',
+    label: '状态',
+    component: 'RadioGroup',
+    componentProps: {
+      options: [
+        {
+          label: '启用',
+          value: 1,
+        },
+        {
+          label: '禁用',
+          value: 0,
+        },
+      ],
+    },
+    defaultValue: 1,
   },
 ];
