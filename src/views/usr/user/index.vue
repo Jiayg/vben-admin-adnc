@@ -1,98 +1,127 @@
 <template>
-  <PageWrapper title="关于">
-    <template #headerContent>
-      <div class="flex justify-between items-center">
-        <span class="flex-1">
-          <a :href="GITHUB_URL" target="_blank">{{ name }}</a>
-          是一个基于Vue3.0、Vite、 Ant-Design-Vue 、TypeScript
-          的后台解决方案，目标是为中大型项目开发,提供现成的开箱解决方案及丰富的示例,原则上不会限制任何代码用于商用。
-        </span>
-      </div>
-    </template>
-    <Description @register="infoRegister" class="enter-y" />
-    <Description @register="register" class="my-4 enter-y" />
-    <Description @register="registerDev" class="enter-y" />
+  <PageWrapper dense contentFullHeight fixedHeight contentClass="flex">
+    <BasicTable @register="registerTable" :searchInfo="searchInfo">
+      <template #toolbar>
+        <a-button type="primary" @click="handleCreate">新增账号</a-button>
+      </template>
+      <template #action="{ record }">
+        <TableAction
+          :actions="[
+            {
+              icon: 'clarity:info-standard-line',
+              tooltip: '查看用户详情',
+              onClick: handleView.bind(null, record),
+            },
+            {
+              icon: 'clarity:note-edit-line',
+              tooltip: '编辑用户资料',
+              onClick: handleEdit.bind(null, record),
+            },
+            {
+              icon: 'ant-design:delete-outlined',
+              color: 'error',
+              tooltip: '删除此账号',
+              popConfirm: {
+                title: '是否确认删除',
+                confirm: handleDelete.bind(null, record),
+              },
+            },
+          ]"
+        />
+      </template>
+    </BasicTable>
+    <AccountModal @register="registerModal" @success="handleSuccess" />
   </PageWrapper>
 </template>
-<script lang="ts" setup>
-  import { h } from 'vue';
-  import { Tag } from 'ant-design-vue';
+
+<script lang="ts">
+  import { defineComponent, reactive } from 'vue';
+
+  import { BasicTable, useTable, TableAction } from '/@/components/Table';
+  import { getUserList } from '/@/api/usr/user';
   import { PageWrapper } from '/@/components/Page';
-  import { Description, DescItem, useDescription } from '/@/components/Description/index';
-  import { GITHUB_URL, SITE_URL, DOC_URL } from '/@/settings/siteSetting';
 
-  const { pkg, lastBuildTime } = __APP_INFO__;
+  import { useModal } from '/@/components/Modal';
+  import AccountModal from './AccountModal.vue';
 
-  const { dependencies, devDependencies, name, version } = pkg;
+  import { columns, searchFormSchema } from './user.data';
+  import { useGo } from '/@/hooks/web/usePage';
 
-  const schema: DescItem[] = [];
-  const devSchema: DescItem[] = [];
+  export default defineComponent({
+    name: 'UserManagement',
+    components: { BasicTable, PageWrapper, AccountModal, TableAction },
+    setup() {
+      const go = useGo();
+      const [registerModal, { openModal }] = useModal();
+      const searchInfo = reactive<Recordable>({});
+      const [registerTable, { reload, updateTableDataRecord }] = useTable({
+        title: '账号列表',
+        api: getUserList,
+        rowKey: 'id',
+        columns,
+        formConfig: {
+          labelWidth: 120,
+          schemas: searchFormSchema,
+          autoSubmitOnEnter: true,
+        },
+        useSearchForm: true,
+        showTableSetting: true,
+        bordered: true,
+        handleSearchInfoFn(info) {
+          console.log('handleSearchInfoFn', info);
+          return info;
+        },
+        actionColumn: {
+          width: 120,
+          title: '操作',
+          dataIndex: 'action',
+          slots: { customRender: 'action' },
+        },
+      });
 
-  const commonTagRender = (color: string) => (curVal) => h(Tag, { color }, () => curVal);
-  const commonLinkRender = (text: string) => (href) => h('a', { href, target: '_blank' }, text);
+      function handleCreate() {
+        openModal(true, {
+          isUpdate: false,
+        });
+      }
 
-  const infoSchema: DescItem[] = [
-    {
-      label: '版本',
-      field: 'version',
-      render: commonTagRender('blue'),
+      function handleEdit(record: Recordable) {
+        console.log(record);
+        openModal(true, {
+          record,
+          isUpdate: true,
+        });
+      }
+
+      function handleDelete(record: Recordable) {
+        console.log(record);
+      }
+
+      function handleSuccess({ isUpdate, values }) {
+        if (isUpdate) {
+          // 演示不刷新表格直接更新内部数据。
+          // 注意：updateTableDataRecord要求表格的rowKey属性为string并且存在于每一行的record的keys中
+          const result = updateTableDataRecord(values.id, values);
+          console.log(result);
+        } else {
+          reload();
+        }
+      }
+
+      function handleView(record: Recordable) {
+        go('/system/account_detail/' + record.id);
+      }
+
+      return {
+        registerTable,
+        registerModal,
+        handleCreate,
+        handleEdit,
+        handleDelete,
+        handleSuccess,
+        handleView,
+        searchInfo,
+      };
     },
-    {
-      label: '最后编译时间',
-      field: 'lastBuildTime',
-      render: commonTagRender('blue'),
-    },
-    {
-      label: '文档地址',
-      field: 'doc',
-      render: commonLinkRender('文档地址'),
-    },
-    {
-      label: '预览地址',
-      field: 'preview',
-      render: commonLinkRender('预览地址'),
-    },
-    {
-      label: 'Github',
-      field: 'github',
-      render: commonLinkRender('Github'),
-    },
-  ];
-
-  const infoData = {
-    version,
-    lastBuildTime,
-    doc: DOC_URL,
-    preview: SITE_URL,
-    github: GITHUB_URL,
-  };
-
-  Object.keys(dependencies).forEach((key) => {
-    schema.push({ field: key, label: key });
-  });
-
-  Object.keys(devDependencies).forEach((key) => {
-    devSchema.push({ field: key, label: key });
-  });
-
-  const [register] = useDescription({
-    title: '生产环境依赖',
-    data: dependencies,
-    schema: schema,
-    column: 3,
-  });
-
-  const [registerDev] = useDescription({
-    title: '开发环境依赖',
-    data: devDependencies,
-    schema: devSchema,
-    column: 3,
-  });
-
-  const [infoRegister] = useDescription({
-    title: '项目信息',
-    data: infoData,
-    schema: infoSchema,
-    column: 2,
   });
 </script>
