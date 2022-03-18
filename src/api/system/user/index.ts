@@ -1,14 +1,14 @@
 import { defHttp } from '/@/utils/http/axios';
-import { USerPageListGetResultModel, UserSearchPagedParams } from './model/userNewModel';
+import { UserPageListGetResultModel, UserSearchPagedParams } from './model/userNewModel';
 
 enum Api {
-  UsrPrefix = '/usr/users',
-  GetUser = '/usr/users',
-  IsAccountExist = '/usr/users/accountExist',
+  UsrPrefix = '/users',
+  GetUser = '/users',
+  IsAccountExist = '/users/accountExist',
 }
 
 export function getUserList(params: UserSearchPagedParams) {
-  return defHttp.get<USerPageListGetResultModel>({ url: Api.GetUser, params });
+  return defHttp.get<UserPageListGetResultModel>({ url: Api.GetUser, params });
 }
 
 export const changeStatus = (id: number, status: number) =>

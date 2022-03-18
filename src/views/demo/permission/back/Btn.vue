@@ -1,9 +1,9 @@
 <template>
   <PageWrapper contentBackground title="按钮权限控制" contentClass="p-4">
     <CurrentPermissionMode />
-    <p>
+    <!-- <p>
       当前拥有的code列表: <a> {{ permissionStore.getPermCodeList }} </a>
-    </p>
+    </p> -->
     <Divider />
     <Alert
       class="mt-4"
@@ -63,7 +63,7 @@
   import CurrentPermissionMode from '../CurrentPermissionMode.vue';
   import { usePermission } from '/@/hooks/web/usePermission';
   import { Authority } from '/@/components/Authority';
-  import { usePermissionStore } from '/@/store/modules/permission';
+  // import { usePermissionStore } from '/@/store/modules/permission';
   import { PermissionModeEnum } from '/@/enums/appEnum';
   import { PageWrapper } from '/@/components/Page';
   import { useAppStore } from '/@/store/modules/app';
@@ -73,7 +73,7 @@
     components: { Alert, PageWrapper, CurrentPermissionMode, Divider, Authority },
     setup() {
       const { hasPermission } = usePermission();
-      const permissionStore = usePermissionStore();
+      // const permissionStore = usePermissionStore();
       const appStore = useAppStore();
       const userStore = useUserStore();
 
@@ -88,12 +88,10 @@
 
         // 重新获取用户信息和菜单
         userStore.getUserInfoAction();
-        permissionStore.changePermissionCode();
       }
 
       return {
         hasPermission,
-        permissionStore,
         switchToken,
         isBackPremissionMode,
       };

@@ -1,4 +1,5 @@
-import { changeStatus, isAccountExist } from '/@/api/usr/user';
+import { changeStatus } from '/@/api/system/user';
+import { GetRolesTree } from '/@/api/system/role';
 import { BasicColumn, FormSchema } from '/@/components/Table';
 import { Switch, Tag } from 'ant-design-vue';
 import { h } from 'vue';
@@ -116,17 +117,17 @@ export const accountFormSchema: FormSchema[] = [
         required: true,
         message: '请输入用户名',
       },
-      {
-        validator(_, value) {
-          return new Promise((resolve, reject) => {
-            isAccountExist(value)
-              .then(() => resolve())
-              .catch((err) => {
-                reject(err.response.data.detail || '验证失败');
-              });
-          });
-        },
-      },
+      // {
+      //   validator(_, value) {
+      //     return new Promise((resolve, reject) => {
+      //       isAccountExist(value)
+      //         .then(() => resolve())
+      //         .catch((err) => {
+      //           reject(err.response.data.detail || '验证失败');
+      //         });
+      //     });
+      //   },
+      // },
     ],
   },
   {
@@ -171,17 +172,17 @@ export const accountFormSchema: FormSchema[] = [
     component: 'DatePicker',
     required: true,
   },
-  // {
-  //   label: '角色',
-  //   field: 'role',
-  //   component: 'ApiSelect',
-  //   componentProps: {
-  //     api: GetRolesTree,
-  //     labelField: 'roleName',
-  //     valueField: 'roleValue',
-  //   },
-  //   required: true,
-  // },
+  {
+    label: '角色',
+    field: 'role',
+    component: 'Select',
+    componentProps: {
+      api: GetRolesTree,
+      labelField: 'roleName',
+      valueField: 'roleValue',
+    },
+    required: true,
+  },
   {
     field: 'dept',
     label: '所属部门',

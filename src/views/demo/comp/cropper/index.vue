@@ -53,7 +53,7 @@
       const circleInfo = ref('');
       const circleImg = ref('');
       const userStore = useUserStore();
-      const avatar = ref(userStore.getUserInfo?.avatar || '');
+      const avatar = ref(userStore.getUserInfo?.profile.avatar || '');
       function handleCropend({ imgBase64, imgInfo }) {
         info.value = imgInfo;
         cropperImg.value = imgBase64;

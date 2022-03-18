@@ -4,7 +4,7 @@ import { LoginParams, LoginResultModel, GetUserInfoModel } from './model/userMod
 import { ErrorMessageMode } from '/#/axios';
 
 enum Api {
-  GetSession = 'usr/session',
+  GetSession = '/session',
 }
 
 export function loginApi(params: LoginParams, mode: ErrorMessageMode = 'modal') {

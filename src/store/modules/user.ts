@@ -124,6 +124,7 @@ export const useUserStore = defineStore({
     async getUserInfoAction(): Promise<GetUserInfoModel | null> {
       if (!this.getToken) return null;
       const userInfo = await getUserInfo();
+      userInfo.homePath = '/dashboard/analysis';
       const { roles = [] } = userInfo;
       if (isArray(roles)) {
         const roleList = roles as RoleEnum[];

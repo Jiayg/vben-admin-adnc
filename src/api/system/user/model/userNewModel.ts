@@ -23,4 +23,4 @@ export interface UserListItem {
   statusName: string;
 }
 
-export type USerPageListGetResultModel = BasicFetchResult<UserListItem>;
+export type UserPageListGetResultModel = BasicFetchResult<UserListItem>;

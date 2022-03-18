@@ -2,7 +2,7 @@ import { defHttp } from '/@/utils/http/axios';
 import { getMenuListResultModel } from './model/menuModel';
 
 enum Api {
-  GetMenus = 'usr/menus/routers',
+  GetMenus = '/menus/routers',
 }
 
 /**

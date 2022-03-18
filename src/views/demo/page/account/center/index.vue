@@ -80,7 +80,7 @@
     },
     setup() {
       const userStore = useUserStore();
-      const avatar = computed(() => userStore.getUserInfo.avatar || headerImg);
+      const avatar = computed(() => userStore.getUserInfo?.profile.avatar || headerImg);
       return {
         prefixCls: 'account-center',
         avatar,
