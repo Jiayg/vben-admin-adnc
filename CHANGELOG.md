@@ -1,3 +1,12 @@
+# 2.8.0 (2022-03-19)
+
+
+### Features
+
+* **views:** 完成菜单权限 ([fa62013](https://github.com/anncwb/vue-vben-admin/commit/fa620134a93d6393db5182e5837ffa3af51c6b43))
+
+
+
 ## [2.8.0](https://github.com/anncwb/vue-vben-admin/compare/v2.7.2...v2.8.0) (2021-11-03)
 
 ### Bug Fixes
