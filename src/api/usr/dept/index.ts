@@ -2,13 +2,13 @@ import { defHttp } from '/@/utils/http/axios';
 import { DeptListItem } from './model/deptModel';
 
 enum Api {
-  UsrPrefix = '/depts',
-  GetDeptsTree = '/depts/deptTreeList',
+  Depts = '/usr/depts',
+  TreeList = '/deptTreeList',
 }
 export function getRoleList() {
-  return defHttp.get<DeptListItem>({ url: Api.UsrPrefix });
+  return defHttp.get<DeptListItem>({ url: Api.Depts });
 }
 export const GetDeptTreeList = () =>
   defHttp.get<DeptListItem>({
-    url: Api.GetDeptsTree,
+    url: Api.Depts + Api.TreeList,
   });

@@ -4,13 +4,13 @@ import { LoginParams, LoginResultModel, GetUserInfoModel } from './model/userMod
 import { ErrorMessageMode } from '/#/axios';
 
 enum Api {
-  GetSession = '/session',
+  Session = '/usr/session',
 }
 
 export function loginApi(params: LoginParams, mode: ErrorMessageMode = 'modal') {
   return defHttp.post<LoginResultModel>(
     {
-      url: Api.GetSession,
+      url: Api.Session,
       params,
     },
     {
@@ -20,9 +20,9 @@ export function loginApi(params: LoginParams, mode: ErrorMessageMode = 'modal') 
 }
 
 export function getUserInfo() {
-  return defHttp.get<GetUserInfoModel>({ url: Api.GetSession }, { errorMessageMode: 'none' });
+  return defHttp.get<GetUserInfoModel>({ url: Api.Session }, { errorMessageMode: 'none' });
 }
 
 export function doLogout() {
-  return defHttp.delete({ url: Api.GetSession });
+  return defHttp.delete({ url: Api.Session });
 }

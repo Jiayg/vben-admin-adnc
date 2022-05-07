@@ -1,5 +1,5 @@
-import { changeStatus } from '/@/api/system/user';
-import { GetRolesTree } from '/@/api/system/role';
+import { changeStatus } from '../../../api/usr/user';
+import { GetRolesTree } from '../../../api/usr/role';
 import { BasicColumn, FormSchema } from '/@/components/Table';
 import { Switch, Tag } from 'ant-design-vue';
 import { h } from 'vue';

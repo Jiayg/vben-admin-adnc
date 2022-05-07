@@ -6,13 +6,13 @@ import {
 } from './model/roleModel';
 
 enum Api {
-  UsrPrefix = '/roles',
+  Roles = '/usr/roles',
 }
 export function getRoleList(params: RoleSearchPagedParams) {
-  return defHttp.get<RolePageListGetResultModel>({ url: Api.UsrPrefix, params });
+  return defHttp.get<RolePageListGetResultModel>({ url: Api.Roles, params });
 }
 
 export const GetRolesTree = (params?: any) =>
   defHttp.get<RoleTreeModel>({
-    url: `${Api.UsrPrefix}/${params.id}/rolestree`,
+    url: `${Api.Roles}/${params.id}/rolestree`,
   });
